@@ -7,4 +7,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'fitness-tracker';
+  productName = 'A Book';
+
+  products = ['A boot', 'A tree'];
+
+  onAddProduct() {
+    this.products.push(this.productName);
+  }
 }
