@@ -12,11 +12,11 @@ export class TrainingService {
     // private ExerciseCollection: AngularFirestoreCollection<Exercise>;
     exerciseChanged = new Subject<Exercise>();
     exercisesChanged = new Subject<Exercise[]>();
+    finishedExercisesChanged = new Subject<Exercise[]>();
 
     availableExercises: Exercise[] = [];
 
     private runningExercise: Exercise;
-    private exercises: Exercise[] = [];
 
     constructor(private db: AngularFirestore) {}
 
@@ -35,18 +35,21 @@ export class TrainingService {
     }
 
     startExercise(selectedId: string) {
+        // this.db.doc('availableExercises/' + selectedId).update({
+        //     lastSelected: new Date()
+        // });
         this.runningExercise = this.availableExercises.find(ex => ex.id === selectedId);
         this.exerciseChanged.next({...this.runningExercise});
     }
 
     completeExercise() {
-        this.exercises.push({...this.runningExercise, date: new Date(), state: 'completed'});
+        this.addDataToDatabase({...this.runningExercise, date: new Date(), state: 'completed'});
         this.runningExercise = null;
         this.exerciseChanged.next(null);
     }
 
     cancelExercise(progress: number) {
-        this.exercises.push({
+        this.addDataToDatabase({
             ...this.runningExercise,
             duration: this.runningExercise.duration * (progress / 100),
             calories: this.runningExercise.calories * (progress / 100),
@@ -60,12 +63,15 @@ export class TrainingService {
         return {...this.runningExercise};
     }
 
-    getCompletedOrCancelled() {
-        return this.exercises.slice();
+    fetchCompletedOrCancelled() {
+        this.db.collection('finishedExercises').valueChanges()
+        .subscribe((exercises: Exercise[]) => {
+            this.finishedExercisesChanged.next(exercises);
+        });
+    }
+
+    private addDataToDatabase(exercise: Exercise) {
+        this.db.collection('finishedExercises').add(exercise);
     }
 }
 
-export interface ExerciseId extends Exercise {
-    id: string;
-  }
-  
