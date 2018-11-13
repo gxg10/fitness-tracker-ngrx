@@ -31,14 +31,9 @@ import { reducers } from './app.reducer';
 @NgModule({
   declarations: [
     AppComponent,
-    TrainingComponent,
-    CurrentTrainingComponent,
-    NewTrainingComponent,
-    PastTrainingComponent,
     WelcomeComponent,
     HeaderComponent,
-    SidenavListComponent,
-    StopTrainingComponent
+    SidenavListComponent
   ],
   imports: [
     BrowserModule,
@@ -46,16 +41,12 @@ import { reducers } from './app.reducer';
     MaterialModule,
     AppRoutingModule,
     FlexLayoutModule,
-    FormsModule,
-    ReactiveFormsModule,
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule,
-    AngularFireAuthModule,
     AuthModule,
+    AngularFirestoreModule,
     StoreModule.forRoot(reducers)
   ],
   providers: [AuthService, TrainingService, UIService],
-  bootstrap: [AppComponent],
-  entryComponents: [StopTrainingComponent]
+  bootstrap: [AppComponent]
 })
 export class AppModule { }
